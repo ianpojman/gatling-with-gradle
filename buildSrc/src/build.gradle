@@ -1,0 +1,14 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repository.excilys.com/content/groups/public' }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.codehaus.groovy:groovy-all:2.2.1'
+}
+
+

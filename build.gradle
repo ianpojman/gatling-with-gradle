@@ -1,0 +1,63 @@
+apply plugin: 'groovy'
+apply plugin: 'scala'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'jetty'
+
+task testSetup(type: TestSetup, dependsOn: jettyRun)
+
+task runLoadTest(type: JavaExec, dependsOn: testSetup) {
+    main = "com.excilys.ebi.gatling.app.Gatling"
+    classpath = sourceSets.main.runtimeClasspath
+    args = Eval.me("['-s', 'loadTests.TestSimulation']")
+}
+
+task testTeardown(type: TestTearDown) {
+}
+testTeardown.mustRunAfter runLoadTest
+jettyStop.mustRunAfter testTeardown
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['loadTestSrc']
+        }
+        groovy {
+            srcDirs = ['testWebAppSrc/groovy']
+        }
+    }
+}
+
+sourceCompatibility = 1.6
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repository.excilys.com/content/groups/public' }
+}
+
+jettyRun {
+    scanIntervalSeconds = 1
+    httpPort = 8094
+    webAppSourceDirectory = file('testWebAppSrc')
+    daemon = true
+}
+
+
+
+dependencies {
+    // Gatling dependencies
+    compile 'com.excilys.ebi.gatling:gatling-app:1.5.3'
+    compile 'com.excilys.ebi.gatling.highcharts:gatling-charts-highcharts:1.5.3'
+    compile 'org.scala-lang:scala-compiler:2.9'
+    compile 'org.scala-lang:scala-library:2.9'
+
+    // Dependencies for the test Server
+    compile 'org.codehaus.groovy:groovy-all:2.2.1'
+    providedCompile "javax.servlet:servlet-api:2.5"
+    testCompile 'org.eclipse.jetty.aggregate:jetty-all-server:8.1.0.v20120127'
+}
