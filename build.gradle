@@ -4,16 +4,22 @@ apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'jetty'
 
-task testSetup(type: TestSetup, dependsOn: jettyRun)
+task testSetup(type: TestSetup)
 
-task runLoadTest(type: JavaExec, dependsOn: testSetup) {
-    main = "com.excilys.ebi.gatling.app.Gatling"
+task runLoadTest(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
+    // Gatling application
+    main = "com.excilys.ebi.gatling.app.Gatling"
+    // Specify the simulation to run
     args = Eval.me("['-s', 'loadTests.TestSimulation']")
 }
 
 task testTeardown(type: TestTearDown) {
 }
+
+// Orchestrate the tasks
+testSetup.dependsOn jettyRun
+runLoadTest.dependsOn testSetup
 testTeardown.mustRunAfter runLoadTest
 jettyStop.mustRunAfter testTeardown
 
@@ -37,6 +43,7 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+    // Gatling libraries
     maven { url 'http://repository.excilys.com/content/groups/public' }
 }
 

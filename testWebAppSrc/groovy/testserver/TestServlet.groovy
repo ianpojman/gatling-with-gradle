@@ -5,6 +5,7 @@ import javax.servlet.ServletConfig
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+// Output some meaningless data after a random delay in order to generate some interesting test data
 class TestServlet extends GroovyServlet {
     void init(ServletConfig config) {
 
