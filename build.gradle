@@ -8,8 +8,9 @@ task testSetup(type: TestSetup)
 
 task runLoadTest(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
+
     // Gatling application
-    main = "com.excilys.ebi.gatling.app.Gatling"
+    main = "io.gatling.app.Gatling"
     // Specify the simulation to run
     args = Eval.me("['-s', 'loadTests.TestSimulation']")
 }
@@ -36,9 +37,14 @@ sourceSets {
             srcDirs = ['testWebAppSrc/groovy']
         }
     }
+    test {
+        resources {
+            srcDir "test"
+        }
+    }
 }
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 version = '1.0'
 
 repositories {
@@ -49,7 +55,7 @@ repositories {
 
 jettyRun {
     scanIntervalSeconds = 1
-    httpPort = 8094
+    httpPort = 8888
     webAppSourceDirectory = file('testWebAppSrc')
     daemon = true
 }
@@ -58,13 +64,17 @@ jettyRun {
 
 dependencies {
     // Gatling dependencies
-    compile 'com.excilys.ebi.gatling:gatling-app:1.5.3'
-    compile 'com.excilys.ebi.gatling.highcharts:gatling-charts-highcharts:1.5.3'
-    compile 'org.scala-lang:scala-compiler:2.9'
-    compile 'org.scala-lang:scala-library:2.9'
+//    compile 'com.excilys.ebi.gatling:gatling-app:1.5.3'
+//    compile 'com.excilys.ebi.gatling.highcharts:gatling-charts-highcharts:1.5.3'
+ 
+    compile 'io.gatling:gatling-app:2.1.6'
+    compile 'io.gatling.highcharts:gatling-charts-highcharts:2.1.6'
+
+    compile 'org.scala-lang:scala-compiler:2.11.7'
+    compile 'org.scala-lang:scala-library:2.11.7'
 
     // Dependencies for the test Server
     compile 'org.codehaus.groovy:groovy-all:2.2.1'
     providedCompile "javax.servlet:servlet-api:2.5"
-    testCompile 'org.eclipse.jetty.aggregate:jetty-all-server:8.1.0.v20120127'
+//    testCompile 'org.eclipse.jetty.aggregate:jetty-all-server:8.1.0.v20120127'
 }
